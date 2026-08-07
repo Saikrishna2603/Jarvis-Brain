@@ -1,6 +1,7 @@
 import os
 
 from jarvis_platform.config import load_app_environment
+from jarvis_brain.service_paths import SERVICE_ROOT
 from jarvis_platform.schemas.llm import LLMProviderName, LLMTaskType
 from jarvis_platform.schemas.llm_router import LLMModelCapability
 
@@ -9,7 +10,7 @@ class LLMModelRegistry:
     """Safe public model capability registry."""
 
     def __init__(self) -> None:
-        load_app_environment()
+        load_app_environment(SERVICE_ROOT)
         general_model = os.getenv("LLM_GENERAL_MODEL", "llama3.1:8b")
         coding_model = os.getenv("LLM_CODING_MODEL", "qwen2.5-coder:7b")
         classification_model = os.getenv(

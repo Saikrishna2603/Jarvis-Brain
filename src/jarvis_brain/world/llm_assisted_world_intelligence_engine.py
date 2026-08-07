@@ -2,6 +2,7 @@ import os
 from typing import Any
 
 from jarvis_platform.config import load_app_environment
+from jarvis_brain.service_paths import SERVICE_ROOT
 from jarvis_brain.llm.safe_llm_service import SafeLLMService
 from jarvis_brain.world.llm_world_prompt_builder import LLMWorldPromptBuilder
 from jarvis_brain.world.llm_world_validator import LLMWorldValidator
@@ -142,7 +143,7 @@ def create_llm_assisted_world_intelligence_engine(
     safe_llm_service: SafeLLMService | None = None,
 ) -> LLMAssistedWorldIntelligenceEngine:
     """Create an assisted world engine from environment configuration."""
-    load_app_environment()
+    load_app_environment(SERVICE_ROOT)
     return LLMAssistedWorldIntelligenceEngine(
         safe_llm_service=safe_llm_service,
         enabled=_env_truthy(os.getenv("LLM_WORLD_ENABLED")),

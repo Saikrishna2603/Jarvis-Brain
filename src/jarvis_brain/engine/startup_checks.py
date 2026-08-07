@@ -1,9 +1,10 @@
 import os
 from typing import Any
 
-from jarvis_platform.config import ENV_PATH
+from jarvis_platform.config import env_path_for
 from jarvis_platform.security.auth_guard import AuthGuard
 from jarvis_platform.security.request_limits import RequestSizeLimiter
+from jarvis_brain.service_paths import SERVICE_ROOT
 
 
 SECRET_ENV_KEYWORDS = ("KEY", "TOKEN", "SECRET", "PASSWORD", "DATABASE_URL")
@@ -24,8 +25,14 @@ class StartupChecks:
     def run(self) -> dict[str, Any]:
         """Return startup health and config checks without secrets."""
         auth = self.auth_guard.status()
+        # Resolved per call against Brain's own repository. The module-level
+        # `ENV_PATH` this used to read is fixed at import of the shared config
+        # package, before any service exists, and pointed at Core in the
+        # composed workspace — so Brain reported its `.env` missing while
+        # running on it.
+        env_file = env_path_for(SERVICE_ROOT)
         checks = {
-            "environment_file_present": ENV_PATH.exists(),
+            "environment_file_present": env_file.exists(),
             "auth_enabled": auth.enabled,
             "request_size_limit_enabled": True,
             "request_size_limit_bytes": self.request_size_limiter.max_bytes,
@@ -36,7 +43,7 @@ class StartupChecks:
         warnings: list[str] = []
         if not auth.enabled:
             warnings.append("Admin auth is disabled for development.")
-        if not ENV_PATH.exists():
+        if not env_file.exists():
             warnings.append("Project .env file was not found.")
         return {
             "status": "ok",

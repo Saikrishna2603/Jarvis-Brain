@@ -3,8 +3,9 @@ import os
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from jarvis_platform.config import PROJECT_ROOT, load_app_environment
+from jarvis_platform.config import load_app_environment
 from jarvis_brain.llm.omniroute.runtime_status import safe_runtime_status
+from jarvis_brain.service_paths import SERVICE_ROOT
 
 AUDITED_OMNIROUTE_VERSION = "3.8.49"
 AUDITED_OMNIROUTE_COMMIT = "066e9275c45f11ac8b42eb6b807c845528982552"
@@ -18,7 +19,9 @@ class OmniRouteSettings:
     """Environment-backed OmniRoute settings with fail-closed defaults."""
 
     def __init__(self) -> None:
-        load_app_environment()
+        # Constructed on demand, long after every service has imported, so the
+        # root has to be named: unqualified this reads the last importer's.
+        load_app_environment(SERVICE_ROOT)
         self.enabled = _truthy(os.getenv("OMNIROUTE_ENABLED", "false"))
         self.base_url = _validate_loopback_url(
             os.getenv("OMNIROUTE_BASE_URL", "http://127.0.0.1:20128/v1")
@@ -58,8 +61,12 @@ class OmniRouteSettings:
             "OMNIROUTE_CIRCUIT_RECOVERY_SECONDS", 30
         )
         configured_path = os.getenv("OMNIROUTE_ROUTE_REGISTRY")
+        # Brain's route registry lives in Brain's repository. `PROJECT_ROOT`
+        # used to name it and resolved to `jarvis-core` in the composed
+        # workspace, because that global is a working-directory guess made
+        # before any service declared itself.
         self.route_registry_path = Path(configured_path).expanduser() if configured_path else (
-            PROJECT_ROOT / "config" / "llm" / "omniroute_routes.yaml"
+            SERVICE_ROOT / "config" / "llm" / "omniroute_routes.yaml"
         )
 
     @property

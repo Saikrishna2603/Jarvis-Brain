@@ -1,6 +1,7 @@
 import os
 
 from jarvis_platform.config import load_app_environment
+from jarvis_brain.service_paths import SERVICE_ROOT
 from jarvis_platform.schemas.llm import LLMProviderName
 
 
@@ -8,7 +9,7 @@ class LLMRouterConfig:
     """Environment-backed router configuration with safe defaults."""
 
     def __init__(self) -> None:
-        load_app_environment()
+        load_app_environment(SERVICE_ROOT)
         self.default_provider = _provider_from_env("LLM_DEFAULT_PROVIDER", LLMProviderName.OLLAMA)
         self.enabled = _env_truthy(os.getenv("LLM_ROUTER_ENABLED", "true"))
         self.retry_count = _int_from_env("LLM_ROUTER_RETRY_COUNT", 1)

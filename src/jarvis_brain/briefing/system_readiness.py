@@ -4,6 +4,7 @@ from typing import Any, Callable
 from sqlalchemy import text
 
 from jarvis_platform.config import load_app_environment
+from jarvis_brain.service_paths import SERVICE_ROOT
 from jarvis_platform.integrations.integration_registry import IntegrationRegistry
 from jarvis_brain.ports import RetrievalRegistry
 from jarvis_brain.ports import LocalMacTTSProvider
@@ -71,7 +72,7 @@ def check_llm() -> dict[str, Any]:
     connection to a model provider just to greet you, so the detail says so
     rather than implying the model was reached.
     """
-    load_app_environment()
+    load_app_environment(SERVICE_ROOT)
     enabled = str(os.getenv("LLM_ENABLED", "")).strip().lower() in {"1", "true", "yes", "on"}
     provider = os.getenv("LLM_PROVIDER", "").strip()
     model = os.getenv("LLM_MODEL", "").strip()
@@ -175,7 +176,7 @@ def check_retrieval(retrieval_registry: RetrievalRegistry) -> dict[str, Any]:
 
 def check_agent_stream() -> dict[str, Any]:
     """Report whether the live agent event stream is enabled."""
-    load_app_environment()
+    load_app_environment(SERVICE_ROOT)
     enabled = str(os.getenv("AGENT_STREAM_ENABLED", "true")).strip().lower() in {
         "1",
         "true",

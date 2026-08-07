@@ -1,6 +1,7 @@
 import os
 
 from jarvis_platform.config import load_app_environment
+from jarvis_brain.service_paths import SERVICE_ROOT
 from jarvis_brain.llm.llm_model_router import LLMModelRouter
 from jarvis_brain.llm.llm_provider import LLMProvider
 from jarvis_brain.llm.mock_llm_provider import MockLLMProvider
@@ -26,7 +27,7 @@ def create_llm_provider(model: str | None = None) -> LLMProvider:
     The mock provider is the default so tests and local development do not
     require Ollama to be running.
     """
-    load_app_environment()
+    load_app_environment(SERVICE_ROOT)
     if not _env_truthy(os.getenv("LLM_ENABLED")):
         return MockLLMProvider()
 
@@ -73,7 +74,7 @@ def create_llm_provider(model: str | None = None) -> LLMProvider:
 
 def create_model_router() -> LLMModelRouter:
     """Create an LLM model router from environment configuration."""
-    load_app_environment()
+    load_app_environment(SERVICE_ROOT)
     return LLMModelRouter(
         general_model=os.getenv("LLM_GENERAL_MODEL", "llama3.1:8b"),
         coding_model=os.getenv("LLM_CODING_MODEL", "qwen2.5-coder:7b"),

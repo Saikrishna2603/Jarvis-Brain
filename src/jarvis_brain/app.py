@@ -12,7 +12,6 @@ the actual problem.
 from __future__ import annotations
 
 import os
-import pathlib
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -22,8 +21,13 @@ from jarvis_platform.config import load_app_environment, set_service_root
 
 # Declare this repository as the service root before anything reads config.
 # The shared platform package cannot infer it — see jarvis_platform.config.
-SERVICE_ROOT = set_service_root(pathlib.Path(__file__).resolve().parents[2])
-load_app_environment()
+from jarvis_brain.service_paths import SERVICE_ROOT
+
+# `set_service_root` records what this process was started as. It is one
+# global and the last writer wins, so nothing at runtime may rely on it —
+# `service_paths.SERVICE_ROOT` is the answer that stays true.
+set_service_root(SERVICE_ROOT)
+load_app_environment(SERVICE_ROOT)
 
 from jarvis_brain.ports import unbound_ports
 from jarvis_brain.routes.agent_lifecycle import router as agent_lifecycle_router
@@ -59,9 +63,14 @@ def _provider_report() -> dict[str, object]:
     `mocked` is now part of the contract so that cannot happen silently again.
     """
 
-    from jarvis_platform.config import environment_is_loaded
+    from jarvis_platform.config import environment_is_loaded_for
 
-    configured = environment_is_loaded()
+    # Asks about *this* repository, not the process-global service root. When
+    # the workspace hosts several services in one process the global belongs to
+    # whichever imported last, and Brain would report `environment_loaded:
+    # false` while running correctly on its own `.env` — the same class of
+    # untruth as the mock-reported-ready bug, pointing the other way.
+    configured = environment_is_loaded_for(SERVICE_ROOT)
 
     try:
         from jarvis_brain.llm.llm_provider_factory import create_llm_provider

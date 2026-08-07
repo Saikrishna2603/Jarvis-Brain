@@ -9,6 +9,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from jarvis_platform.config import load_app_environment
+from jarvis_brain.service_paths import SERVICE_ROOT
 from jarvis_platform.identity.dependencies import require_user_identity
 from jarvis_platform.identity.models import UserIdentity
 from jarvis_brain.llm.intelligence_router import intelligence_router
@@ -54,7 +55,7 @@ class LLMRouterTestRequest(BaseModel):
 @router.get("/llm/status")
 def llm_status() -> dict[str, Any]:
     """Return configured LLM provider status."""
-    load_app_environment()
+    load_app_environment(SERVICE_ROOT)
     router_instance = create_model_router()
     provider = create_llm_provider(model=router_instance.general_model)
     llm_enabled = _env_truthy(os.getenv("LLM_ENABLED"))
