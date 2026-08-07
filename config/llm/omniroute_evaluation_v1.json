@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "description": "Synthetic, non-sensitive model-routing evaluation corpus.",
+  "categories": [
+    {"name": "simple_conversation", "count": 20, "template": "Offer a brief greeting variant {index}.", "cloud_authorized": false},
+    {"name": "classification", "count": 20, "template": "Classify sample item {index} into a harmless category.", "cloud_authorized": false},
+    {"name": "coding", "count": 30, "template": "Write a pure Python helper for synthetic case {index}.", "cloud_authorized": false},
+    {"name": "debugging", "count": 20, "template": "Debug a synthetic Python traceback for case {index}.", "cloud_authorized": false},
+    {"name": "architecture_reasoning", "count": 20, "template": "Design and compare a complex software architecture for synthetic case {index}.", "cloud_authorized": true},
+    {"name": "long_context", "count": 20, "template": "Summarize a long public-domain context fixture for case {index}.", "cloud_authorized": false},
+    {"name": "structured_output", "count": 15, "template": "Extract a JSON schema from synthetic record {index}.", "cloud_authorized": false},
+    {"name": "privacy_policy", "count": 15, "template": "Explain how to protect a fake API key in policy case {index}.", "cloud_authorized": false},
+    {"name": "provider_failure", "count": 15, "template": "Analyze provider failure simulation {index} without executing it.", "cloud_authorized": false},
+    {"name": "voice_latency", "count": 10, "template": "Voice status request {index}.", "cloud_authorized": false}
+  ]
+}

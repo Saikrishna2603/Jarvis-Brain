@@ -1,0 +1,37 @@
+# Jarvis Brain — reasoning and model routing (spec §4, §16).
+
+name: brain
+service_version: 0.1.0
+contract_version: 1.0.0
+
+description: >
+  LLM providers, Ollama, OmniRoute integration, provider health, route
+  availability, model selection, prompt construction and Brain request
+  execution. Brain health is not Jarvis health.
+
+capabilities:
+  - llm.inference
+  - llm.provider.ollama
+  - llm.provider.openai_compatible
+  - llm.routing
+  - llm.route_health
+  - prompt.construction
+  - reasoning
+  - planning
+
+base_url: http://127.0.0.1:8102
+startup_command: python -m jarvis_brain.app
+working_directory: .
+
+health:
+  liveness: /health/live
+  readiness: /health/ready
+  detail: /health/status
+
+required_dependencies: []
+optional_dependencies:
+  - memory
+
+supported_runtime_modes:
+  - in_process
+  - local_process

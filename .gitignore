@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+node_modules/
+dist/
+.run/
+.pytest_cache/
+workspace.yaml
+.DS_Store
+
+# Never commit real configuration or secrets.
+.env
+.env.*
+!.env.example
